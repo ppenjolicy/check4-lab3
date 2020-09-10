@@ -1,35 +1,29 @@
-import React, { useState, useEffect, useRef, Component } from 'react';
-import { attempt, extend } from 'lodash';
+import React, { useState, useEffect, useRef} from 'react';
 
-export default class CharacterCard extends Component {
+export default function CharacterCard(props) {
 
-   constructor(props) {
-      super(props)
-      this.state = {
-         active: false,
+   const attemptRef = useRef(props.attempt);
+
+   const [active, setActive] = useState(false);
+
+   const activate = () => {
+      if (!active) {
+         setActive(true)
+         props.activationHandler(props.value)
       }
    }
 
-   componentDidUpdate(prevProps) {
-      if (prevProps.attempt != this.props.attempt) {
-         this.setState({ active: false })
+   useEffect(() => {
+      if (attemptRef.current !== props.attempt) {
+         setActive(false)
+         attemptRef.current = props.attempt
       }
-   }
+   },[])
 
-   activate = () => {
-      if (!this.state.active) {
-         this.props.activationHandler(this.props.value)
-         this.setState({ active: true })
-      }
-   }
-
-   render() {
-      let className = `card ${this.state.active ? 'activeCard' : ''}`
-      return (
-         <div className={className} onClick={this.activate}>
-            {this.props.value}
-         </div>
-      )
-   }
+   const className = `card ${active ? 'activeCard' : ''}`
+   return (
+      <div className={className} onClick={activate}>{props.value}</div>
+   )
 
 }
+
